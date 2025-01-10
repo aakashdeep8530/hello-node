@@ -1,0 +1,26 @@
+stages:
+  - build
+  - deploy
+
+# Build job
+build:
+  stage: build
+  image: node:14
+  script:
+    - echo "Building the project..."
+    - npm install
+    - npm run build
+
+# Deploy job (
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the application..."
+    # Set up SSH key
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $AWS_PUBLIC_IP >> ~/.ssh/known_hosts
+    # SSH into the EC2 instance and deploy
+    - ssh ubuntu@$AWS_PUBLIC_IP 'cd /home/ubuntu/my-app && git pull && npm install && pm2 restart app.js'
+
