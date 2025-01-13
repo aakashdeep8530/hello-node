@@ -1,13 +1,6 @@
-stages:
-  - deploy
-
 deploy:
-  stage: deploy
   script:
-    - echo "Deploying application..."
-    # Application ko build aur deploy karne ke commands
-    - npm install  # agar Node.js application hai
+    - npm install
     - npm run build
-    # Deploy commands
-  only:
-    - main  # main branch push par hi run hoga
+    - scp -i $SSH_PRIVATE_KEY -r build/* ubuntu@$AWS_PUBLIC_IP:/home/ubuntu/hello-node/
+    - ssh -i $SSH_PRIVATE_KEY ubuntu@$AWS_PUBLIC_IP "cd /home/ubuntu/hello-node && npm install -g serve && serve -s . -l 3000 &"
