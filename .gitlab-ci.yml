@@ -1,5 +1,6 @@
 deploy:
   script:
     - npm install
+    - npm start
     - scp -i $SSH_PRIVATE_KEY -r build/* ubuntu@$AWS_PUBLIC_IP:/home/ubuntu/hello-node/
     - ssh -i $SSH_PRIVATE_KEY ubuntu@$AWS_PUBLIC_IP "cd /home/ubuntu/hello-node && npm install -g serve && serve -s . -l 3000 &"
