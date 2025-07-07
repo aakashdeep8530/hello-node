@@ -1,6 +1,0 @@
-deploy:
-  script:
-    - npm install
-    - echo "$SSH_PRIVATE_KEY" > /tmp/ssh_private_key && chmod 600 /tmp/ssh_private_key
-    - scp -o StrictHostKeyChecking=no -i /tmp/ssh_private_key -r * ubuntu@$AWS_PUBLIC_IP:/home/ubuntu/hello-node/
-    - ssh -o StrictHostKeyChecking=no -i /tmp/ssh_private_key ubuntu@$AWS_PUBLIC_IP "cd /home/ubuntu/hello-node && npm install && npm start &"
