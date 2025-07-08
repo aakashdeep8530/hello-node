@@ -27,4 +27,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_PASSWORD }}/hello-world:latest
+          tags: ${{ secrets.DOCKER_PASSWORD }}/hello-world:latest
