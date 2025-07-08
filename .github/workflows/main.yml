@@ -31,11 +31,12 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             echo "✅ Connected to EC2"
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/hello-world:latest
-            docker stop hello || true
-            docker rm hello || true
-            docker run -d --name hello -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/hello-world:latest
+            sudo apt-get install docker.io
+            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
+            sudo docker stop hello || true
+            sudo docker rm hello || true
+            sudo docker run -d --name hello -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hello-world-v3:latest
             echo "🚀 Deployed!"
           EOF
 
