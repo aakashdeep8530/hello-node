@@ -17,10 +17,10 @@ jobs:
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-world-v3:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-world:latest .
 
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/hello-world-v3:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
 
       - name: Save SSH key
         run: |
@@ -36,9 +36,10 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
             sudo docker stop hello || true
             sudo docker rm hello || true
-            sudo docker run -d --name hello -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/hello-world-v3:latest
+            sudo docker run -d --name hello -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
             echo "🚀 Deployed!"
           EOF
+          exit
 
       - name: Delete SSH key
         run: rm -f ec2_key.pem
