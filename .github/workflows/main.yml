@@ -36,7 +36,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
             sudo docker stop hello || true
             sudo docker rm hello || true
-            sudo docker run -d --name hello -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hello-world-v3:latest
+            sudo docker run -d --name hello -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/hello-world-v3:latest
             echo "🚀 Deployed!"
           EOF
 
