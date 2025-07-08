@@ -1,4 +1,4 @@
-name: Docker Deploy 
+name: Docker Deploy
 
 on:
   push:
@@ -17,7 +17,27 @@ jobs:
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-world-v2:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-world-v3:latest .
 
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/hello-world-v2:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/hello-world-v3:latest
+
+      - name: Save SSH key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+
+      - name: Deploy to EC2 via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "✅ Connected to EC2"
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/hello-world:latest
+            docker stop hello || true
+            docker rm hello || true
+            docker run -d --name hello -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/hello-world:latest
+            echo "🚀 Deployed!"
+          EOF
+
+      - name: Delete SSH key
+        run: rm -f ec2_key.pem
