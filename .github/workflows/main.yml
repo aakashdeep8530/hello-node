@@ -22,24 +22,23 @@ jobs:
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
 
-      - name: Save SSH key
-        run: |
-          echo "${{ secrets.EC2_KEY }}" > ec2_key.pem
-          chmod 600 ec2_key.pem
+#      - name: Save SSH key
+ #       run: |
+  #        echo "${{ secrets.EC2_KEY }}" > ec2_key.pem
+#          chmod 600 ec2_key.pem
+#
+ #     - name: Deploy to EC2 via SSH
+  #      run: |
+   ##        echo "✅ Connected to EC2"
+     #       sudo apt-get install docker.io -y
+      #      sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+       #     sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
+        #    sudo docker stop hello || true
+         #   sudo docker rm hello || true
+          #  sudo docker run -d --name hello -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
+     #       echo "🚀 Deployed!"
+     #     EOF
+      #    exit
 
-      - name: Deploy to EC2 via SSH
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            echo "✅ Connected to EC2"
-            sudo apt-get install docker.io -y
-            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
-            sudo docker stop hello || true
-            sudo docker rm hello || true
-            sudo docker run -d --name hello -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
-            echo "🚀 Deployed!"
-          EOF
-          exit
-
-      - name: Delete SSH key
-        run: rm -f ec2_key.pem
+      #- name: Delete SSH key
+       # run: rm -f ec2_key.pem
