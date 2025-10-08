@@ -1,4 +1,4 @@
-name: Docker Deploy
+name: Deploy Webservice
 
 on:
   push:
@@ -6,39 +6,66 @@ on:
       - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
+  # ✅ Auto deploy to DEV
+  deploy-dev:
+    runs-on: glpl-dev-be
     steps:
-      - name: Checkout Code
-        run: git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY .
+      - uses: actions/checkout@v3
+      - name: Deploy to DEV
+        run: |
+          echo "Deploying to DEV server..."
+          # your deployment script
 
-      - name: Docker Login
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+  # ✅ Manual approval for UAT
+  deploy-uat:
+    needs: deploy-dev
+    runs-on: glpl-uat-be
+    environment:
+      name: uat
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to UAT
+        run: |
+          echo "Deploying to UAT server..."
+          # your deployment script
 
-      - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-world:latest .
+  # ✅ Manual approval for QA
+  deploy-qa:
+    needs: deploy-dev
+    runs-on: glpl-qa-be
+    environment:
+      name: qa
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to QA
+        run: |
+          echo "Deploying to QA server..."
+          # your deployment script
 
-      - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
+  # ✅ Hotfix, PPD, Prod similar
+  deploy-hotfix:
+    needs: deploy-dev
+    runs-on: glpl-hotfix-be
+    environment:
+      name: hotfix
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "Deploying to HOTFIX server..."
 
-#      - name: Save SSH key
- #       run: |
-  #        echo "${{ secrets.EC2_KEY }}" > ec2_key.pem
-#          chmod 600 ec2_key.pem
-#
- #     - name: Deploy to EC2 via SSH
-  #      run: |
-   ##        echo "✅ Connected to EC2"
-     #       sudo apt-get install docker.io -y
-      #      sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-       #     sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
-        #    sudo docker stop hello || true
-         #   sudo docker rm hello || true
-          #  sudo docker run -d --name hello -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/hello-world:latest
-     #       echo "🚀 Deployed!"
-     #     EOF
-      #    exit
+  deploy-ppd:
+    needs: deploy-dev
+    runs-on: glpl-ppd-be
+    environment:
+      name: ppd
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "Deploying to PPD server..."
 
-      #- name: Delete SSH key
-       # run: rm -f ec2_key.pem
+  deploy-prod:
+    needs: deploy-dev
+    runs-on: glpl-prod-be
+    environment:
+      name: prod
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "Deploying to PROD server..."
