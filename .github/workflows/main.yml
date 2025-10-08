@@ -16,19 +16,6 @@ jobs:
           echo "Deploying to DEV server..."
           # your deployment script
 
-  # ✅ Manual approval for UAT
-  deploy-uat:
-    needs: deploy-dev
-    runs-on: glpl-uat-be
-    environment:
-      name: uat
-    steps:
-      - uses: actions/checkout@v3
-      - name: Deploy to UAT
-        run: |
-          echo "Deploying to UAT server..."
-          # your deployment script
-
   # ✅ Manual approval for QA
   deploy-qa:
     needs: deploy-dev
